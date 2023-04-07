@@ -1,0 +1,8 @@
+const API_URL = "https://eth-goerli.g.alchemy.com/v2/Lj8AthiqYuTEvL3zwuvKQJJR9UQ0Thbv"
+const PRIVATE_KEY = "9b87aff2aa7370a7f8ac94d7dd37fd7eff65044fbc350cf43d8ea952de814b4e"
+
+const alchemyKey = 'https://eth-goerli.g.alchemy.com/v2/Lj8AthiqYuTEvL3zwuvKQJJR9UQ0Thbv'
+const contractAddress = "0xbf1c62fdA99b852fF87Fd8d275D2AEabF994fBeC"
+
+const key = '7567202fca9236448a21'
+const secret = '789aaf633b725540854912a87d88b749c979f6738e5c11ae89c13efc9c719a31'
