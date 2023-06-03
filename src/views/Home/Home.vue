@@ -6,7 +6,10 @@
                 <img src="../../assets/wallet.png" alt="" @click="connectEthereum">
                 <span class="hasNotLoginHint">👈click here to connect wallet !</span>
             </div>
-            <span v-else class="hasLoginHint">Connected: {{ this.accounts[0] }}</span>
+            <div v-else>
+                <span class="hasLoginHint">Connected: {{ this.accounts[0] }}</span>
+                <el-button type="success" class="checkNFTsButton" style="width: 200px" @click="checkBoxVisible = !checkBoxVisible">Check My NFTs</el-button>
+            </div>
         </div>
         <div class="box" v-if="mintingNumberReceived">
             <form>
@@ -28,6 +31,12 @@
                     type="text"
                     placeholder="e.g. This a cat !"
                     v-model="description"
+                ></el-input>
+                <h2>Based NFT id: (Optional)</h2>
+                <el-input
+                    type="text"
+                    placeholder=""
+                    v-model="linkedNFT"
                 ></el-input>
             </form>
             <div class="confirmButton" v-if="(this.count < this.mintingNumber) && !showResult">
@@ -51,11 +60,38 @@
                 <el-button type="primary" style="width: 120px" @click="handleReceiveMintingNumber">Confirm</el-button>
             </div>
         </div>
+
+        <el-dialog
+            title="My NFTs"
+            :visible.sync="checkBoxVisible"
+            class="CheckNftBox"
+            width="50%"
+            >
+            <div>
+                <img width="200px" height="200px" src="../../assets/image.jpg" alt="">
+                <span style="width:200px;display: block;text-align: center;">test1</span>
+                <span style="width:200px;display: block;text-align: center;">NFT id: {{ defaultId }}</span>
+                <span style="width:200px;display: block;text-align: center;">based NFT id: null</span>
+            </div>
+            <template v-if="showResult">
+                <div v-for="item in nftInformationBox">
+                    <img width="200px" height="200px" src="" alt="">
+                    <span style="width:200px;display: block;text-align: center;">{{}}</span>
+                    <span style="width:200px;display: block;text-align: center;">NFT id: {{  }}</span>
+                    <span style="width:200px;display: block;text-align: center;">based NFT id: {{ }}</span>
+                </div>
+            </template>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="checkBoxVisible = false">Close</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+import { customAlphabet } from 'nanoid'
 import { mintNFT } from '../../api/interact.js'
+const nanoid = customAlphabet('1234567890', 6)
 export default{
     data() {
         return {
@@ -67,10 +103,13 @@ export default{
             url: '',
             name: '',
             description: '',
+            basedNFTId: "",
             showResult: false,
             resultUrl: '',
             loginStatus: false,
-            accounts: []
+            accounts: [],
+            checkBoxVisible: false,
+            defaultId: nanoid(),
         }   
     },
 
@@ -100,12 +139,16 @@ export default{
             this.nftInformationBox.push({
                 url: this.url,
                 name: this.name,
-                description: this.description
+                description: this.description,
+                basedNFTId: this.basedNFTId
             })
             this.url = '',
             this.name = '',
             this.description = ''
-            this.count++
+            this.basedNFTId = ''
+            if(this.count < this.mintingNumber){
+                this.count++
+            }
         },
 
         async handleMintNft(){
@@ -114,8 +157,10 @@ export default{
                 this.$message.error('Please login first !')
             }else{
                 for(let i = 0; i < this.nftInformationBox.length; i++){
-                    let res = await mintNFT(this.nftInformationBox[i].url, this.nftInformationBox[i].name, this.nftInformationBox[i].description)
-                    console.log(res);
+                    let res = await mintNFT(this.nftInformationBox[i].url, 
+                    this.nftInformationBox[i].name, 
+                    this.nftInformationBox[i].description)
+                    console.log(res)
                     if(res.status){
                         this.resultLinkBox.push(res.result)
                     } else {
@@ -129,7 +174,8 @@ export default{
 
         handleReceiveMintingNumber(){
             this.mintingNumberReceived = true
-        }
+        },
+
     }
 }
 </script>
@@ -169,6 +215,12 @@ export default{
                 padding: 10px;
                 border-radius: 10%;
                 cursor: pointer;
+            }
+
+            .checkNFTsButton{
+                position: absolute;
+                top: 150px;
+                right: -390px;
             }
             .hasNotLoginHint{
                 position: absolute;
