@@ -2,11 +2,13 @@
     <div class="home">
         <div class="title">
             <span>Welcome to the simplest NFT minting tool</span>
-            <div v-if="!loginStatus">
+            <!-- <div v-if="!loginStatus"> -->
+            <div>
                 <img src="../../assets/wallet.png" alt="" @click="connectEthereum">
                 <span class="hasNotLoginHint">👈click here to connect wallet !</span>
             </div>
-            <div v-else>
+            <!-- <div v-else> -->
+            <div>
                 <span class="hasLoginHint">Connected: {{ this.accounts[0] }}</span>
                 <el-button type="success" class="checkNFTsButton" style="width: 200px" @click="checkBoxVisible = !checkBoxVisible">Check My NFTs</el-button>
             </div>
@@ -36,7 +38,7 @@
                 <el-input
                     type="text"
                     placeholder=""
-                    v-model="linkedNFT"
+                    v-model="basedNFTId"
                 ></el-input>
             </form>
             <div class="confirmButton" v-if="(this.count < this.mintingNumber) && !showResult">
@@ -67,14 +69,16 @@
             class="CheckNftBox"
             width="50%"
             >
-            <div>
-                <img width="200px" height="200px" src="../../assets/image.jpg" alt="">
+            <div @click="checkBasedNFT">
+                <el-tooltip class="item" effect="dark" content="Check Based NFT" placement="top">
+                    <img width="200px" height="200px" src="../../assets/image.jpg" alt="">
+                </el-tooltip>
                 <span style="width:200px;display: block;text-align: center;">test1</span>
                 <span style="width:200px;display: block;text-align: center;">NFT id: {{ defaultId }}</span>
                 <span style="width:200px;display: block;text-align: center;">based NFT id: null</span>
             </div>
             <template v-if="showResult">
-                <div v-for="item in nftInformationBox">
+                <div v-for="item in nftInformationBox" @click="checkBasedNFT">
                     <img width="200px" height="200px" src="" alt="">
                     <span style="width:200px;display: block;text-align: center;">{{}}</span>
                     <span style="width:200px;display: block;text-align: center;">NFT id: {{  }}</span>
@@ -85,6 +89,32 @@
                 <el-button type="primary" @click="checkBoxVisible = false">Close</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog
+            title="Based NFTs"
+            :visible.sync="checkBasedNFTVisible"
+            class="CheckNftBox"
+            width="50%"
+            >
+            <div>
+                <img width="200px" height="200px" src="../../assets/syz.jpg" alt="">
+                <span style="width:200px;display: block;text-align: center;">syz</span>
+                <span style="width:200px;display: block;text-align: center;">NFT id: {{ defaultId2 }}</span>
+                <span style="width:200px;display: block;text-align: center;">based NFT id: {{ defaultId }}</span>
+            </div>
+            <template v-if="showResult">
+                <div v-for="item in nftInformationBox">
+                    <img width="200px" height="200px" src="" alt="">
+                    <span style="width:200px;display: block;text-align: center;">{{ }}</span>
+                    <span style="width:200px;display: block;text-align: center;">NFT id: {{  }}</span>
+                    <span style="width:200px;display: block;text-align: center;">based NFT id: {{ }}</span>
+                </div>
+            </template>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="checkBasedNFTVisible = false">Close</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -109,7 +139,9 @@ export default{
             loginStatus: false,
             accounts: [],
             checkBoxVisible: false,
+            checkBasedNFTVisible: false,
             defaultId: nanoid(),
+            defaultId2: nanoid()
         }   
     },
 
@@ -176,6 +208,9 @@ export default{
             this.mintingNumberReceived = true
         },
 
+        checkBasedNFT(){
+            this.checkBasedNFTVisible = this.defaultId ? true : false
+        }
     }
 }
 </script>
